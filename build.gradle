@@ -1,0 +1,39 @@
+plugins {
+	id 'java'
+	id 'war'
+}
+
+apply from : 'custom-task.gradle'
+
+group = 'vk.csp'
+version = '1.0-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+}
+
+war {
+	archiveFileName = 'csp.war'
+}
+
+dependencies {
+	testImplementation platform('org.junit:junit-bom:5.9.1')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+
+//    Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.20'
+	annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+	//Slf4j
+	implementation 'org.slf4j:slf4j-api:1.7.32'
+
+	compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+	
+	// https://mvnrepository.com/artifact/commons-codec/commons-codec
+	implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+
+}
+
+test {
+    useJUnitPlatform()
+}

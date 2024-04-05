@@ -1,0 +1,38 @@
+def DEPLOYABLE_NAME = 'csp'
+def TOMCAT_HOME = ''
+def DEPLOYMENT_DIR = ''
+def DEPLOYMENT_TYPE = ''
+
+task tomcat(){
+     TOMCAT_HOME= '/Users/vamsi/Vk/copilot_csp_poc/apache-tomcat-9.0.87/'
+    DEPLOYMENT_DIR = 'webapps/'
+    DEPLOYMENT_TYPE = 'war'
+}
+
+task startTomcat(type: Exec) {
+    workingDir TOMCAT_HOME + '/bin'
+    commandLine './startup.sh'
+}
+
+
+task copyWar(type: Copy) {
+    println 'Copying war file to tomcat deployment directory'
+    println 'build/libs/' + DEPLOYABLE_NAME +'.'+ DEPLOYMENT_TYPE
+    println TOMCAT_HOME + DEPLOYMENT_DIR
+
+    from 'build/libs' + DEPLOYABLE_NAME +'.'+ DEPLOYMENT_TYPE
+    into TOMCAT_HOME + DEPLOYMENT_DIR
+}
+
+startTomcat.doFirst{
+    delete TOMCAT_HOME + DEPLOYMENT_DIR + DEPLOYABLE_NAME
+    delete TOMCAT_HOME + DEPLOYMENT_DIR + DEPLOYABLE_NAME + DEPLOYMENT_TYPE
+}
+
+task automate(){
+    dependsOn ('build','copyWar','startTomcat')
+
+    // tasks.findByName('build').mustRunAfter('stopTomcat')
+    tasks.findByName('copyWar').mustRunAfter('build')
+    tasks.findByName('startTomcat').mustRunAfter('copyWar')
+}
